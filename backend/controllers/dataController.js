@@ -31,4 +31,36 @@ const getAllData = async (req, res, next) => {
   }
 };
 
-module.exports = { postData, getAllData };
+const getAverageData = async (req, res, next) => {
+  try {
+    const result = await Data.aggregate([
+      {
+        $group: {
+          _id: null,
+          avgVoltage: { $avg: "$voltage" },
+          avgCurrent: { $avg: "$current" },
+          avgForce: { $avg: "$force" },
+          avgPower: { $avg: "$power" }
+        }
+      }
+    ]);
+
+    if (result.length === 0) {
+      return res.status(404).json({ message: "No data available to average." });
+    }
+
+    res.json({
+      average: {
+        voltage: result[0].avgVoltage,
+        current: result[0].avgCurrent,
+        force: result[0].avgForce,
+        power: result[0].avgPower
+      }
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+module.exports = { postData, getAllData, getAverageData };
