@@ -2,24 +2,58 @@ const Data = require('../models/Data');
 
 const postData = async (req, res, next) => {
   try {
-    const { data } = req.body;
+    const body = req.body;
+    // Fungsi untuk normalisasi data
+    const normalizeData = (data) => {
+      const { voltage, current, force, power, timestamp } = data;
 
-    if (!data || typeof data !== 'object') {
+      if (
+        voltage == null ||
+        current == null ||
+        force == null ||
+        power == null
+      ) {
+        throw new Error('Missing required fields');
+      }
+
+      return {
+        voltage,
+        current,
+        force,
+        power,
+        timestamp: timestamp ? new Date(timestamp) : new Date()
+      };
+    };
+
+    
+    if (Array.isArray(body)) {
+      // Multiple data
+      const formattedData = body.map((item) => normalizeData(item.data));
+      const inserted = await Data.insertMany(formattedData);
+
+      return res.status(201).json({
+        message: 'Banyak data masuk, King',
+        data: inserted
+      });
+    } else if (typeof body === 'object' && body.data) {
+      // Single data
+      const singleData = normalizeData(body.data);
+      const inserted = await Data.create(singleData);
+
+      return res.status(201).json({
+        message: 'Data dah masuk, King',
+        data: inserted
+      });
+    } else {
       return res.status(400).json({ message: 'Invalid data format' });
     }
-
-    const { voltage, current, force, power } = data;
-
-    const newData = await Data.create({ voltage, current, force, power });
-
-    res.status(201).json({
-      message: 'Data dah masuk, King',
-      data: newData
-    });
   } catch (error) {
     next(error);
   }
 };
+
+
+
 
 
 const getAllData = async (req, res, next) => {
@@ -67,7 +101,7 @@ const getAverageData = async (req, res, next) => {
 const getTotalEnergy = async (req, res, next) => {
   try {
     const data = await Data.find();
-    const totalEnergy = data.reduce((sum, d) => sum + d.power * 5, 0); // 5s assumed interval
+    const totalEnergy = data.reduce((sum, d) => sum + d.power * (5/3600), 0); // 5s assumed interval
     res.json({ totalEnergy });
   } catch (error) {
     next(error);
@@ -99,7 +133,7 @@ const getEnergyGeneration24h = async (req, res, next) => {
     const grouped = {};
     data.forEach(d => {
       const hour = new Date(d.timestamp).getHours();
-      grouped[hour] = (grouped[hour] || 0) + d.power * 5;
+      grouped[hour] = (grouped[hour] || 0) + d.power * (5/3600);
     });
 
     res.json(grouped);
@@ -137,7 +171,7 @@ const getVoltageOutput24h = async (req, res, next) => {
 const getEnergyStorage = async (req, res, next) => {
   try {
     const data = await Data.find();
-    const energy = data.reduce((sum, d) => sum + d.power * 5, 0);
+    const energy = data.reduce((sum, d) => sum + d.power * (5/3600), 0);
     res.json({ estimatedStorage: energy });
   } catch (error) {
     next(error);
@@ -184,7 +218,7 @@ const getTotalEnergyToday = async (req, res, next) => {
     const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
     const data = await Data.find({ timestamp: { $gte: startOfToday } });
-    const totalEnergy = data.reduce((sum, d) => sum + d.power * 5, 0);
+    const totalEnergy = data.reduce((sum, d) => sum + d.power * (5/3600), 0);
 
     res.json({ totalEnergyToday: totalEnergy });
   } catch (error) {
@@ -198,7 +232,7 @@ const getTotalEnergyLast7Days = async (req, res, next) => {
     const since = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
     const data = await Data.find({ timestamp: { $gte: since } });
 
-    const totalEnergy = data.reduce((sum, d) => sum + d.power * 5, 0);
+    const totalEnergy = data.reduce((sum, d) => sum + d.power * (5/3600), 0);
     res.json({ totalEnergyLast7Days: totalEnergy });
   } catch (error) {
     next(error);
@@ -211,7 +245,7 @@ const getTotalEnergyLast30Days = async (req, res, next) => {
     const since = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
     const data = await Data.find({ timestamp: { $gte: since } });
 
-    const totalEnergy = data.reduce((sum, d) => sum + d.power * 5, 0);
+    const totalEnergy = data.reduce((sum, d) => sum + d.power * (5/3600), 0);
     res.json({ totalEnergyLast30Days: totalEnergy });
   } catch (error) {
     next(error);
@@ -233,7 +267,7 @@ const getDailyEnergyLast7Days = async (req, res, next) => {
             month: { $month: "$timestamp" },
             day: { $dayOfMonth: "$timestamp" },
           },
-          totalEnergy: { $sum: { $multiply: ["$power", 5] } }
+          totalEnergy: { $sum: { $multiply: ["$power", 5/3600] } }
         }
       },
       { $sort: { "_id": 1 } }
@@ -254,7 +288,7 @@ const getWeeklyEnergy = async (req, res, next) => {
       {
         $group: {
           _id: { $isoWeek: "$timestamp" },
-          totalEnergy: { $sum: { $multiply: ["$power", 5] } }
+          totalEnergy: { $sum: { $multiply: ["$power", 5/3600] } }
         }
       },
       { $sort: { "_id": 1 } }
@@ -276,7 +310,7 @@ const getBestPerformanceDay = async (req, res, next) => {
             month: { $month: "$timestamp" },
             day: { $dayOfMonth: "$timestamp" }
           },
-          totalEnergy: { $sum: { $multiply: ["$power", 5] } }
+          totalEnergy: { $sum: { $multiply: ["$power", 5/3600] } }
         }
       },
       { $sort: { totalEnergy: -1 } },
@@ -300,7 +334,7 @@ const getAverageDailyOutput = async (req, res, next) => {
             month: { $month: "$timestamp" },
             day: { $dayOfMonth: "$timestamp" }
           },
-          dailyEnergy: { $sum: { $multiply: ["$power", 5] } }
+          dailyEnergy: { $sum: { $multiply: ["$power", 5/3600] } }
         }
       },
       {
@@ -330,7 +364,7 @@ const getRecentActivity = async (req, res, next) => {
             month: { $month: "$timestamp" },
             day: { $dayOfMonth: "$timestamp" }
           },
-          totalEnergy: { $sum: { $multiply: ["$power", 5] } }
+          totalEnergy: { $sum: { $multiply: ["$power", 5/3600] } }
         }
       },
       { $sort: { "_id": -1 } }
