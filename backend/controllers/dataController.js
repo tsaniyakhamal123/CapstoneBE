@@ -3,9 +3,10 @@ const Data = require('../models/Data');
 const postData = async (req, res, next) => {
   try {
     const body = req.body;
-    // Fungsi untuk normalisasi data
+
+    // Fungsi normalisasi data
     const normalizeData = (data) => {
-      const { voltage, current, force, power, timestamp } = data;
+      const { voltage, current, force, power } = data;
 
       if (
         voltage == null ||
@@ -21,27 +22,27 @@ const postData = async (req, res, next) => {
         current,
         force,
         power,
-        timestamp: timestamp ? new Date(timestamp) : new Date()
+        // ⏰ Gunakan waktu server sekarang
+        timestamp: new Date()
       };
     };
 
-    
     if (Array.isArray(body)) {
-      // Multiple data
+      // Banyak data
       const formattedData = body.map((item) => normalizeData(item.data));
       const inserted = await Data.insertMany(formattedData);
 
       return res.status(201).json({
-        message: 'Banyak data masuk, King',
+        message: 'Banyak data masuk, King 😎',
         data: inserted
       });
     } else if (typeof body === 'object' && body.data) {
-      // Single data
+      // Satu data
       const singleData = normalizeData(body.data);
       const inserted = await Data.create(singleData);
 
       return res.status(201).json({
-        message: 'Data dah masuk, King',
+        message: 'Data dah masuk, King 👑',
         data: inserted
       });
     } else {

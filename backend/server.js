@@ -2,13 +2,14 @@ const express = require('express');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const cors = require('cors');
-
+require('./mqttHandler');
 const connectDB = require('./config/db');
 const dataRoutes = require('./routes/dataRoutes');
 const { errorHandler } = require('./middleware/errorHandler');
 
 dotenv.config();
 connectDB();
+
 
 const app = express();
 app.use(cors());
