@@ -1,0 +1,551 @@
+{
+	"info": {
+		"_postman_id": "capstone-iot-dashboard",
+		"name": "STM32 & Piezoelectric IoT Dashboard API",
+		"description": "Backend API for visualizing sensor data from STM32 and piezoelectric sensors via ESP01",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Data Management",
+			"item": [
+				{
+					"name": "Post Sensor Data",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"voltage\": 5.2,\n  \"current\": 0.75,\n  \"force\": 12.5,\n  \"power\": 3.9\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/data",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"data"
+							]
+						},
+						"description": "Submit sensor data from ESP01 (STM32 & piezoelectric)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Data",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/data",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"data"
+							]
+						},
+						"description": "Retrieve all sensor data records"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Average Data",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/data/avg",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"data",
+								"avg"
+							]
+						},
+						"description": "Get average values of all sensor readings"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Dashboard API",
+			"item": [
+				{
+					"name": "Total Energy",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/data/total-energy",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"data",
+								"total-energy"
+							]
+						},
+						"description": "Get total energy generated"
+					},
+					"response": []
+				},
+				{
+					"name": "Current Voltage",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/data/current-voltage",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"data",
+								"current-voltage"
+							]
+						},
+						"description": "Get current voltage reading"
+					},
+					"response": []
+				},
+				{
+					"name": "Energy Generation (24h)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/data/energy-generation-24h",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"data",
+								"energy-generation-24h"
+							]
+						},
+						"description": "Get energy generation data for last 24 hours"
+					},
+					"response": []
+				},
+				{
+					"name": "Voltage Output (24h)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/data/voltage-output-24h",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"data",
+								"voltage-output-24h"
+							]
+						},
+						"description": "Get voltage output data for last 24 hours"
+					},
+					"response": []
+				},
+				{
+					"name": "Energy Storage",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/data/energy-storage",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"data",
+								"energy-storage"
+							]
+						},
+						"description": "Get current energy storage level"
+					},
+					"response": []
+				},
+				{
+					"name": "Peak Generation",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/data/peak-generation",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"data",
+								"peak-generation"
+							]
+						},
+						"description": "Get peak power generation record"
+					},
+					"response": []
+				},
+				{
+					"name": "Average Voltage",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/data/average-voltage",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"data",
+								"average-voltage"
+							]
+						},
+						"description": "Get average voltage across all readings"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "History API",
+			"item": [
+				{
+					"name": "Total Energy Today",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/data/totalenergytoday",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"data",
+								"totalenergytoday"
+							]
+						},
+						"description": "Get total energy generated today"
+					},
+					"response": []
+				},
+				{
+					"name": "Total Energy (7 Days)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/data/totalenergy-7days",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"data",
+								"totalenergy-7days"
+							]
+						},
+						"description": "Get total energy for the last 7 days"
+					},
+					"response": []
+				},
+				{
+					"name": "Total Energy (30 Days)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/data/totalenergy-30days",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"data",
+								"totalenergy-30days"
+							]
+						},
+						"description": "Get total energy for the last 30 days"
+					},
+					"response": []
+				},
+				{
+					"name": "Daily Energy (7 Days)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/data/daily-energy-7days",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"data",
+								"daily-energy-7days"
+							]
+						},
+						"description": "Get daily energy breakdown for the last 7 days"
+					},
+					"response": []
+				},
+				{
+					"name": "Weekly Energy",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/data/weekly-energy",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"data",
+								"weekly-energy"
+							]
+						},
+						"description": "Get weekly energy summary"
+					},
+					"response": []
+				},
+				{
+					"name": "Best Performance Day",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/data/best-performance",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"data",
+								"best-performance"
+							]
+						},
+						"description": "Get the day with the best performance"
+					},
+					"response": []
+				},
+				{
+					"name": "Average Daily Output",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/data/average-daily-output",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"data",
+								"average-daily-output"
+							]
+						},
+						"description": "Get average daily output metrics"
+					},
+					"response": []
+				},
+				{
+					"name": "Recent Activity",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/data/recent-activity",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"data",
+								"recent-activity"
+							]
+						},
+						"description": "Get recent sensor activity"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Streaming API",
+			"item": [
+				{
+					"name": "Realtime Voltage Stream",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/data/stream/voltage",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"data",
+								"stream",
+								"voltage"
+							]
+						},
+						"description": "Stream real-time voltage data"
+					},
+					"response": []
+				},
+				{
+					"name": "Realtime Current Stream",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/data/stream/current",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"data",
+								"stream",
+								"current"
+							]
+						},
+						"description": "Stream real-time current data"
+					},
+					"response": []
+				},
+				{
+					"name": "Realtime Power Stream",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/data/stream/power",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"data",
+								"stream",
+								"power"
+							]
+						},
+						"description": "Stream real-time power data"
+					},
+					"response": []
+				},
+				{
+					"name": "Realtime Temperature Stream",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/data/stream/temperature",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"data",
+								"stream",
+								"temperature"
+							]
+						},
+						"description": "Stream real-time temperature data"
+					},
+					"response": []
+				},
+				{
+					"name": "Voltage Output Stream",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/data/stream/voltage-output",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"data",
+								"stream",
+								"voltage-output"
+							]
+						},
+						"description": "Stream voltage output data"
+					},
+					"response": []
+				},
+				{
+					"name": "Power Generation Stream",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/data/stream/power-generation",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"data",
+								"stream",
+								"power-generation"
+							]
+						},
+						"description": "Stream power generation data"
+					},
+					"response": []
+				},
+				{
+					"name": "Raw Data Stream",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/data/stream/raw",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"data",
+								"stream",
+								"raw"
+							]
+						},
+						"description": "Stream all raw sensor data"
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:5000",
+			"type": "string"
+		}
+	]
+}
