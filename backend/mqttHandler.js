@@ -1,56 +1,55 @@
-// backend/mqttHandler.js
+// File: backend/mqttHandler.js (PERBAIKAN)
+
 const client = require('./config/mqttClient');
 const Data = require('./models/Data');
 
+// ... (kode client.on('connect') Anda tetap sama) ...
 client.on('connect', () => {
-  console.log('✅ MQTT Handler aktif dan siap menerima data');
+  console.log('✅ MQTT Handler aktif dan siap menerima data');
+  // ... (kode subscribe Anda) ...
 });
 
+
+// UBAH BAGIAN INI
 client.on('message', async (topic, message) => {
-  try {
-    // --- 1️⃣ Ubah buffer ke string dan bersihkan karakter aneh ---
-    let payload = message.toString().trim();
-    payload = payload.replace(/[\u0000-\u001F]+/g, ""); // hapus karakter kontrol
 
-    // --- 2️⃣ Ambil bagian JSON valid (berhenti di kurung tutup terakhir) ---
-    const lastBrace = payload.lastIndexOf('}');
-    if (lastBrace !== -1) {
-      payload = payload.substring(0, lastBrace + 1);
-    }
+  // 1. Terima dan log payload mentah DULUAN
+  let payload = message.toString().trim();
+  console.log(`📥 PESAN DITERIMA di ${topic}:`);
+  console.log(`   Payload Mentah: ${payload}`);
 
-    // --- 3️⃣ Parse JSON ---
-    const data = JSON.parse(payload);
-    console.log('📥 MQTT payload diterima:', data);
+  try {
+    // 2. Bersihkan karakter aneh (dari kode lama Anda)
+    payload = payload.replace(/[\u0000-\u001F]+/g, ""); 
+    const lastBrace = payload.lastIndexOf('}');
+    if (lastBrace !== -1) {
+      payload = payload.substring(0, lastBrace + 1);
+    }
 
-    // --- 4️⃣ Dukungan format fleksibel (pakai "data" atau langsung flat) ---
-    const body = data.data ? data.data : data;
-    const { voltage, current, force, power, timestamp } = body;
+    // 3. Sekarang baru coba parse
+    const data = JSON.parse(payload);
+    console.log('   Payload JSON valid:', data);
 
-    // --- 5️⃣ Validasi sederhana ---
-    if (
-      voltage == null ||
-      current == null ||
-      force == null ||
-      power == null
-    ) {
-      console.warn('⚠️ Missing required fields:', body);
-      return;
-    }
+    // 4. Simpan ke DB
+    const body = data.data ? data.data : data;
+    const { voltage, current, force, power, timestamp } = body;
 
-    // --- 6️⃣ Simpan ke MongoDB ---
-    const newData = new Data({
-      voltage,
-      current,
-      force,
-      power,
-      timestamp: timestamp ? new Date(timestamp) : new Date()
-    });
+    // (Validasi Anda, dll...)
 
-    await newData.save();
-    console.log('✅ Data berhasil disimpan ke MongoDB');
+    const newData = new Data({
+      voltage,
+      current,
+      force,
+      power,
+      timestamp: timestamp ? new Date(timestamp) : new Date()
+    });
 
-  } catch (err) {
-    console.error('❌ Error processing MQTT message:', err.message);
-    console.log('⚠️ Raw message:', message.toString());
-  }
+    await newData.save();
+    console.log('✅ Data berhasil disimpan ke MongoDB');
+
+  } catch (err) {
+    // 4. Jika parse gagal, kita tetap tahu karena log pertama sudah jalan
+    console.error('❌ Error processing MQTT message:', err.message);
+    console.log('   (Payload mentah yang gagal ada di atas)');
+  }
 });
