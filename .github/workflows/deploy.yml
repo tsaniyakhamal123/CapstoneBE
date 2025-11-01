@@ -34,7 +34,7 @@ jobs:
             npm install --production
 
             # Restart PM2 process
-            pm2 restart capstone-backend || pm2 start server.js --name capstone-backend --time
+            pm2 restart capstone-backend --update-env || pm2 start server.js --name capstone-backend --time
             pm2 save
 
             # Show status
@@ -67,5 +67,6 @@ jobs:
             echo "Backend deployment failed!"
             exit 1
           fi
+
 
 
