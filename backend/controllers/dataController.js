@@ -377,86 +377,200 @@ const getRecentActivity = async (req, res, next) => {
   }
 };
 
-//Data Streaming
+//Data Streaming with Server-Sent Events (SSE)
+// Helper function to send SSE data
+const sendSSE = (res, data) => {
+  res.write(`data: ${JSON.stringify(data)}\n\n`);
+};
+
 // Get latest 1 entry for each field (realtime streaming)
 const getRealtimeVoltage = async (req, res, next) => {
-  try {
-    const data = await Data.findOne().sort({ timestamp: -1 });
-    res.json({ voltage: data?.voltage || 0 });
-  } catch (error) {
-    next(error);
-  }
+  // Set SSE headers
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Connection', 'keep-alive');
+
+  // Send initial data immediately
+  const sendVoltageData = async () => {
+    try {
+      const data = await Data.findOne().sort({ timestamp: -1 });
+      sendSSE(res, { voltage: data?.voltage || 0 });
+    } catch (error) {
+      console.error('Error fetching voltage:', error);
+    }
+  };
+
+  // Send first message immediately
+  sendVoltageData();
+
+  // Then send data every 2 seconds
+  const interval = setInterval(sendVoltageData, 2000);
+
+  // Clean up on client disconnect
+  req.on('close', () => {
+    clearInterval(interval);
+    res.end();
+  });
 };
 
 const getRealtimeCurrent = async (req, res, next) => {
-  try {
-    const data = await Data.findOne().sort({ timestamp: -1 });
-    res.json({ current: data?.current || 0 });
-  } catch (error) {
-    next(error);
-  }
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Connection', 'keep-alive');
+
+  const sendCurrentData = async () => {
+    try {
+      const data = await Data.findOne().sort({ timestamp: -1 });
+      sendSSE(res, { current: data?.current || 0 });
+    } catch (error) {
+      console.error('Error fetching current:', error);
+    }
+  };
+
+  sendCurrentData();
+  const interval = setInterval(sendCurrentData, 2000);
+
+  req.on('close', () => {
+    clearInterval(interval);
+    res.end();
+  });
 };
 
 const getRealtimePower = async (req, res, next) => {
-  try {
-    const data = await Data.findOne().sort({ timestamp: -1 });
-    res.json({ power: data?.power || 0 });
-  } catch (error) {
-    next(error);
-  }
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Connection', 'keep-alive');
+
+  const sendPowerData = async () => {
+    try {
+      const data = await Data.findOne().sort({ timestamp: -1 });
+      sendSSE(res, { power: data?.power || 0 });
+    } catch (error) {
+      console.error('Error fetching power:', error);
+    }
+  };
+
+  sendPowerData();
+  const interval = setInterval(sendPowerData, 2000);
+
+  req.on('close', () => {
+    clearInterval(interval);
+    res.end();
+  });
 };
 
 const getRealtimeTemperature = async (req, res, next) => {
-  try {
-    const data = await Data.findOne().sort({ timestamp: -1 });
-    res.json({ temperature: data?.temperature || 0 });
-  } catch (error) {
-    next(error);
-  }
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Connection', 'keep-alive');
+
+  const sendTempData = async () => {
+    try {
+      const data = await Data.findOne().sort({ timestamp: -1 });
+      sendSSE(res, { temperature: data?.temperature || 0 });
+    } catch (error) {
+      console.error('Error fetching temperature:', error);
+    }
+  };
+
+  sendTempData();
+  const interval = setInterval(sendTempData, 2000);
+
+  req.on('close', () => {
+    clearInterval(interval);
+    res.end();
+  });
 };
 
 // Voltage Output per 5 seconds (last 10 entries as example)
 const getVoltageOutputStream = async (req, res, next) => {
-  try {
-    const data = await Data.find({})
-      .sort({ timestamp: -1 })
-      .limit(10); // Last 10 * 5 seconds = last 50s
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Connection', 'keep-alive');
 
-    res.json(data.map(d => ({
-      timestamp: d.timestamp,
-      voltage: d.voltage
-    })).reverse());
-  } catch (error) {
-    next(error);
-  }
+  const sendVoltageOutputData = async () => {
+    try {
+      const data = await Data.find({})
+        .sort({ timestamp: -1 })
+        .limit(10);
+
+      const voltageData = data.map(d => ({
+        timestamp: d.timestamp,
+        voltage: d.voltage
+      })).reverse();
+
+      sendSSE(res, voltageData);
+    } catch (error) {
+      console.error('Error fetching voltage output:', error);
+    }
+  };
+
+  sendVoltageOutputData();
+  const interval = setInterval(sendVoltageOutputData, 2000);
+
+  req.on('close', () => {
+    clearInterval(interval);
+    res.end();
+  });
 };
 
 // Power Generation per 5 seconds (last 10 entries as example)
 const getPowerGenerationStream = async (req, res, next) => {
-  try {
-    const data = await Data.find({})
-      .sort({ timestamp: -1 })
-      .limit(10);
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Connection', 'keep-alive');
 
-    res.json(data.map(d => ({
-      timestamp: d.timestamp,
-      power: d.power
-    })).reverse());
-  } catch (error) {
-    next(error);
-  }
+  const sendPowerGenData = async () => {
+    try {
+      const data = await Data.find({})
+        .sort({ timestamp: -1 })
+        .limit(10);
+
+      const powerData = data.map(d => ({
+        timestamp: d.timestamp,
+        power: d.power
+      })).reverse();
+
+      sendSSE(res, powerData);
+    } catch (error) {
+      console.error('Error fetching power generation:', error);
+    }
+  };
+
+  sendPowerGenData();
+  const interval = setInterval(sendPowerGenData, 2000);
+
+  req.on('close', () => {
+    clearInterval(interval);
+    res.end();
+  });
 };
 
 // Raw Data Stream (no processing)
 const getRawDataStream = async (req, res, next) => {
-  try {
-    const data = await Data.find({})
-      .sort({ timestamp: -1 })
-      .limit(20); // 20 data terakhir
-    res.json(data.reverse());
-  } catch (error) {
-    next(error);
-  }
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Connection', 'keep-alive');
+
+  const sendRawData = async () => {
+    try {
+      const data = await Data.find({})
+        .sort({ timestamp: -1 })
+        .limit(20);
+
+      sendSSE(res, data.reverse());
+    } catch (error) {
+      console.error('Error fetching raw data:', error);
+    }
+  };
+
+  sendRawData();
+  const interval = setInterval(sendRawData, 2000);
+
+  req.on('close', () => {
+    clearInterval(interval);
+    res.end();
+  });
 };
 
 

@@ -27,7 +27,8 @@ const app = express();
 // 1. Definisikan domain yang diizinkan (Whitelist)
 const whitelist = [
     'http://localhost:5173',          // Izinkan Vite lokal (ganti port jika beda)
-    'https://wazap-tau.vercel.app'    // URL Vercel Anda
+    'https://wazap-tau.vercel.app',   // URL Vercel Anda
+    'https://wazap.biz.id'            // Production domain
 ];
 
 // 2. Buat Opsi CORS
