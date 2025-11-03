@@ -41,7 +41,11 @@ const corsOptions = {
         } else {
             callback(new Error('Tidak diizinkan oleh CORS')); // Tolak
         }
-    }
+    },
+    credentials: true, // Allow credentials
+    optionsSuccessStatus: 200, // Some legacy browsers choke on 204
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allowed methods
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'] // Allowed headers
 };
 
 // 3. Gunakan CORS dengan opsi yang sudah dibuat

@@ -385,6 +385,10 @@ const sendSSE = (res, data) => {
 
 // Get latest 1 entry for each field (realtime streaming)
 const getRealtimeVoltage = async (req, res, next) => {
+  // Set CORS headers for SSE
+  res.setHeader('Access-Control-Allow-Origin', req.headers.origin || '*');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+
   // Set SSE headers
   res.setHeader('Content-Type', 'text/event-stream');
   res.setHeader('Cache-Control', 'no-cache');
@@ -414,6 +418,11 @@ const getRealtimeVoltage = async (req, res, next) => {
 };
 
 const getRealtimeCurrent = async (req, res, next) => {
+  // Set CORS headers for SSE
+  res.setHeader('Access-Control-Allow-Origin', req.headers.origin || '*');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+
+  // Set SSE headers
   res.setHeader('Content-Type', 'text/event-stream');
   res.setHeader('Cache-Control', 'no-cache');
   res.setHeader('Connection', 'keep-alive');
@@ -437,6 +446,11 @@ const getRealtimeCurrent = async (req, res, next) => {
 };
 
 const getRealtimePower = async (req, res, next) => {
+  // Set CORS headers for SSE
+  res.setHeader('Access-Control-Allow-Origin', req.headers.origin || '*');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+
+  // Set SSE headers
   res.setHeader('Content-Type', 'text/event-stream');
   res.setHeader('Cache-Control', 'no-cache');
   res.setHeader('Connection', 'keep-alive');
@@ -460,6 +474,11 @@ const getRealtimePower = async (req, res, next) => {
 };
 
 const getRealtimeTemperature = async (req, res, next) => {
+  // Set CORS headers for SSE
+  res.setHeader('Access-Control-Allow-Origin', req.headers.origin || '*');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+
+  // Set SSE headers
   res.setHeader('Content-Type', 'text/event-stream');
   res.setHeader('Cache-Control', 'no-cache');
   res.setHeader('Connection', 'keep-alive');
@@ -484,6 +503,11 @@ const getRealtimeTemperature = async (req, res, next) => {
 
 // Voltage Output per 5 seconds (last 10 entries as example)
 const getVoltageOutputStream = async (req, res, next) => {
+  // Set CORS headers for SSE
+  res.setHeader('Access-Control-Allow-Origin', req.headers.origin || '*');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+
+  // Set SSE headers
   res.setHeader('Content-Type', 'text/event-stream');
   res.setHeader('Cache-Control', 'no-cache');
   res.setHeader('Connection', 'keep-alive');
@@ -516,6 +540,11 @@ const getVoltageOutputStream = async (req, res, next) => {
 
 // Power Generation per 5 seconds (last 10 entries as example)
 const getPowerGenerationStream = async (req, res, next) => {
+  // Set CORS headers for SSE
+  res.setHeader('Access-Control-Allow-Origin', req.headers.origin || '*');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+
+  // Set SSE headers
   res.setHeader('Content-Type', 'text/event-stream');
   res.setHeader('Cache-Control', 'no-cache');
   res.setHeader('Connection', 'keep-alive');
@@ -548,6 +577,11 @@ const getPowerGenerationStream = async (req, res, next) => {
 
 // Raw Data Stream (no processing)
 const getRawDataStream = async (req, res, next) => {
+  // Set CORS headers for SSE
+  res.setHeader('Access-Control-Allow-Origin', req.headers.origin || '*');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+
+  // Set SSE headers
   res.setHeader('Content-Type', 'text/event-stream');
   res.setHeader('Cache-Control', 'no-cache');
   res.setHeader('Connection', 'keep-alive');
